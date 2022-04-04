@@ -1,0 +1,133 @@
+import pandas as pd
+df=pd.read_csv('titanic.csv', usecols=['Pclass','Age','Fare','Survived'])
+df.head()
+
+df['Age'].fillna(df.Age.median(),inplace=True)
+
+df.isnull().sum()
+
+### Independent and dependent features
+X=df.iloc[:,1:]
+y=df.iloc[:,0]
+
+X
+
+from sklearn.model_selection import train_test_split
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.33, random_state=42)
+
+X_train
+
+#### standarisation: We use the Standardscaler from sklearn library
+from sklearn.preprocessing import StandardScaler
+
+scaler=StandardScaler()
+### fit vs fit_transform
+X_train_scaled=scaler.fit_transform(X_train)
+
+X_train_scaled
+
+X_test_scaled=scaler.transform(X_test)
+
+X_test_scaled
+
+### Model Building
+## fit() for training and predict for test
+
+from sklearn.linear_model import LogisticRegression
+classification=LogisticRegression()
+
+classification.fit(X_train_scaled,y_train)
+
+classification.predict(X_test_scaled)
+
+from sklearn.model_selection import train_test_split
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.33, random_state=42)
+
+from sklearn.preprocessing import MinMaxScaler
+min_max=MinMaxScaler()
+df_minmax=pd.DataFrame(min_max.fit_transform(X_train))
+df_minmax.head()
+
+import matplotlib.pyplot as plt
+import seaborn as sns
+sns.pairplot(df_minmax)
+
+plt.hist(df_minmax[1],bins=20)
+
+plt.hist(df_minmax[2],bins=20)
+
+from sklearn.model_selection import train_test_split
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.33, random_state=42)
+
+from sklearn.preprocessing import RobustScaler
+scaler=RobustScaler()
+df_robust_scaler=pd.DataFrame(scaler.fit_transform(X_train))
+df_robust_scaler.head()
+
+scaler.transform(X_test)
+
+import seaborn as sns
+sns.pairplot(df_robust_scaler)
+
+import seaborn as sns
+sns.pairplot(df)
+
+plt.hist(df_robust_scaler[1],bins=20)
+
+plt.hist(df_robust_scaler[2],bins=20)
+
+df=pd.read_csv('titanic.csv',usecols=['Age','Fare','Survived'])
+df.head()
+
+### fillnan
+df['Age']=df['Age'].fillna(df['Age'].median())
+
+df.isnull().sum()
+
+import matplotlib.pyplot as plt
+
+
+import scipy.stats as stat
+import pylab 
+
+#### If you want to check whether feature is guassian or normal distributed
+#### Q-Q plot
+def plot_data(df,feature):
+    plt.figure(figsize=(10,6))
+    plt.subplot(1,2,1)
+    df[feature].hist()
+    plt.subplot(1,2,2)
+    stat.probplot(df[feature],dist='norm',plot=pylab)
+    plt.show()
+    
+plot_data(df,'Age')
+
+import numpy as np
+df['Age_log']=np.log(df['Age'])
+plot_data(df,'Age_log')
+
+df['Age_reciprocal']=1/df.Age
+plot_data(df,'Age_reciprocal')
+
+##### Square Root Transformation
+df['Age_sqaure']=df.Age**(1/2)
+plot_data(df,'Age_sqaure')
+
+#### Exponential Transdormation
+df['Age_exponential']=df.Age**(1/1.2)
+plot_data(df,'Age_exponential')
+
+df['Age_Boxcox'],parameters=stat.boxcox(df['Age'])
+
+print(parameters)
+
+plot_data(df,'Age_Boxcox')
+
+plot_data(df,'Fare')
+
+#### Fare
+df['Fare_log']=np.log1p(df['Fare'])
+plot_data(df,'Fare_log')
+
+df['Fare_Boxcox'],parameters=stat.boxcox(df['Fare']+1)
+plot_data(df,'Fare_Boxcox')
